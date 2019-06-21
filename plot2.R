@@ -1,22 +1,25 @@
 ### PLOT 2 ###
+#set working directory
+setwd("C:/Users/course009.FSKTM/Documents/WIE1700xx")
 
-## Getting the entire dataset : Electric power consumption
-data_entire <- household_power_consumption
+library(data.table)
 
-data_entire$Date <- as.Date(data_entire$Date, format="%d/%m/%Y")
+## Getting full dataset
+DT<-fread("./household_power_consumption.txt", na.strings="?")
 
-## Subsetting the data from the dates 2007-02-01 and 2007-02-02
-data <- subset(data_entire, subset=(Date >= "2007-02-01" & Date <= "2007-02-02"))
-rm(data_entire)
+DT$Date <- as.Date(DT$Date, format="%d/%m/%Y")
+
+## Subsetting the data
+DT.filter <- subset(DT, subset=(Date >= "2007-02-01" & Date <= "2007-02-02"))
+rm(DT)
 
 ## Converting dates
-datetime <- paste(as.Date(data$Date), data$Time)
-data$Datetime <- as.POSIXct(datetime)
+datetime <- paste(as.Date(DT.filter$Date), DT.filter$Time)
+DT.filter$Datetime <- as.POSIXct(datetime)
 
-## Plot 2
-plot(data$Global_active_power~data$Datetime, type="l",
+#output histogram to PNG
+plot(DT.filter$Global_active_power~DT.filter$Datetime, type="l",
      ylab="Global Active Power (kilowatts)", xlab="")
-
-## Saving plot 2 to file
 dev.copy(png, file="plot2.png", height=480, width=480)
+
 dev.off()
